@@ -1,0 +1,35 @@
+gaff : Cloud API AMQP daemon
+
+gaff is a pub/sub system for interfacing asynchronously with cloud APIs.
+
+License: apache 2
+
+Features:
+* Uses AMQP and the JSON-RPC (http://json-rpc.org/) format
+* Easy support for any API
+** Currently supports part of the dynect, ec2 and slicehost APIs
+** Uses fog (http://github.com/geemus/fog)
+
+Example usage:
+
+Send a JSON-RPC formatted message to the exchange with the a routing key to perform operations on that API.
+
+require 'rubygems'
+require 'carrot'
+
+exch = Carrot::AMQP::Exchange.new(Carrot.new, :topic, "api")
+
+hash = {"method" => "add_a_record", "params" => {
+            "customer_name" => "gaff.com", 
+            "username" => "username", 
+            "password" => "password",
+            "node" => "test123",
+            "zone" => "gaff.com",
+            "address" => "127.0.0.1",
+            "ttl" => "300"
+           }
+       }
+
+json = hash.to_json
+
+exch.publish(json, :routing_key => "dynect")

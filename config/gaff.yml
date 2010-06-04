@@ -1,0 +1,6 @@
+defaults:
+  amqp_host: "localhost"
+  api:
+    ec2: "ec2"
+    slicehost: "slicehost"
+    dynect: "dynect"

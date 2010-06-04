@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+require File.join(File.dirname(__FILE__), '..', 'lib', 'gaff')
+
+class Gaff
+  def self.main
+    Gaff::Dispatch.loop
+  end
+
+  main
+end
