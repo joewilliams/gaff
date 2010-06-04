@@ -12,6 +12,8 @@ Features:
 
 Example usage:
 
+$ gaff ./gaff.yml
+
 Send a JSON-RPC formatted message to the exchange with the a routing key to perform operations on that API.
 
 require 'rubygems'
