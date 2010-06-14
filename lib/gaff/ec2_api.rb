@@ -18,8 +18,8 @@ class Gaff
       case hash["method"]  
       when "attach_volume"
         result = ec2.attach_volume(
-          hash["params"]["volume_id"],
           hash["params"]["instance_id"],
+          hash["params"]["volume_id"],
           hash["params"]["device"])                            
       when "create_volume"
         result = ec2.create_volume(
