@@ -31,9 +31,11 @@ class Gaff
       when "detach_volume"
         result = ec2.detach_volume(
           hash["params"]["volume_id"],
-          hash["params"]["instance_id"],
-          hash["params"]["device"],
-          hash["params"]["force"])
+          {
+            "InstanceId" => hash["params"]["instance_id"],
+            "Device" => hash["params"]["device"],
+            "Force" => hash["params"]["force"]
+          })
       when "launch_instances"
         result = ec2.run_instances(
           hash["params"]["image_id"],
