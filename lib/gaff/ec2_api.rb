@@ -14,13 +14,13 @@ class Gaff
           :aws_secret_access_key => hash["params"]["aws_key_secret"],
           :region => "us-east-1")
         
-        @ec2est = Fog::AWS::EC2.new(
+        @ec2west = Fog::AWS::EC2.new(
           :aws_access_key_id => hash["params"]["aws_key"],
           :aws_secret_access_key => hash["params"]["aws_key_secret"],
           :region => "us-west-1")
         
         Gaff::Log.debug(@ec2east)
-        Gaff::Log.debug(@ec2est)
+        Gaff::Log.debug(@ec2west)
         STDOUT.flush
                                 
         case hash["method"]  
@@ -28,20 +28,20 @@ class Gaff
           if zone(hash["params"]["volume_id"]).include? "us-east-1"
             result = @ec2east.attach_volume(hash["params"]["instance_id"], hash["params"]["volume_id"], hash["params"]["device"])
           elsif zone(hash["params"]["volume_id"]).include? "us-west-1"
-            result = @ec2est.attach_volume(hash["params"]["instance_id"], hash["params"]["volume_id"], hash["params"]["device"])
+            result = @ec2west.attach_volume(hash["params"]["instance_id"], hash["params"]["volume_id"], hash["params"]["device"])
           end                          
         when "create_volume"
           if hash["params"]["availability_zone"].include? "us-east-1"
             result = @ec2east.create_volume(hash["params"]["availability_zone"], hash["params"]["size"].to_i, hash["params"]["snapshot_id"])
           elsif hash["params"]["availability_zone"].include? "us-west-1"
-            result = @ec2est.create_volume(hash["params"]["availability_zone"], hash["params"]["size"].to_i, hash["params"]["snapshot_id"])
+            result = @ec2west.create_volume(hash["params"]["availability_zone"], hash["params"]["size"].to_i, hash["params"]["snapshot_id"])
           end
         when "delete_volume"
           volume_id = hash["params"]["volume_id"]
           if zone(volume_id).include? "us-east-1"
             result = @ec2east.delete_volume(volume_id)
           elsif zone(volume_id).include? "us-west-1"
-            result = @ec2est.delete_volume(volume_id)
+            result = @ec2west.delete_volume(volume_id)
           end
         when "detach_volume"
           if zone(hash["params"]["volume_id"]).include? "us-east-1"
@@ -53,7 +53,7 @@ class Gaff
                 "Force" => hash["params"]["force"]
               })
           elsif zone(hash["params"]["volume_id"]).include? "us-west-1"
-            result = @ec2est.detach_volume(
+            result = @ec2west.detach_volume(
               hash["params"]["volume_id"],
               {
                 "InstanceId" => hash["params"]["instance_id"],
@@ -74,7 +74,7 @@ class Gaff
                 "InstanceType" => hash["params"]["instance_type"]
               })
           elsif hash["params"]["availability_zone"].include? "us-west-1"
-            result = @ec2est.run_instances(
+            result = @ec2west.run_instances(
               hash["params"]["image_id"],
               hash["params"]["count"],
               hash["params"]["count"],
@@ -90,14 +90,14 @@ class Gaff
           if zone(instance_ids).include? "us-east-1"
             result = @ec2east.reboot_instances(instance_ids)
           elsif zone(instance_ids).include? "us-west-1"
-            result = @ec2est.reboot_instances(instance_ids)
+            result = @ec2west.reboot_instances(instance_ids)
           end
         when "terminate_instances"
           instance_ids = hash["params"]["instance_ids"]
           if zone(instance_ids).include? "us-east-1"
             result = @ec2east.terminate_instances(instance_ids)
           elsif zone(instance_ids).include? "us-west-1"
-            result = @ec2est.terminate_instances(instance_ids)
+            result = @ec2west.terminate_instances(instance_ids)
           end
         end
         
@@ -114,13 +114,13 @@ class Gaff
         begin
           @ec2east.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
         rescue
-          @ec2est.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
+          @ec2west.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
         end
       elsif id.include? "vol-"
         begin
           @ec2east.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
         rescue
-          @ec2est.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
+          @ec2west.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
         end
       end
     end
