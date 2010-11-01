@@ -9,17 +9,17 @@ class Gaff
       STDOUT.flush
       
       begin
-        @ec2east = Fog::AWS::EC2.new(
+        @ec2east = Fog::AWS::Compute.new(
           :aws_access_key_id => hash["params"]["aws_key"],
           :aws_secret_access_key => hash["params"]["aws_key_secret"],
           :region => "us-east-1")
         
-        @ec2west = Fog::AWS::EC2.new(
+        @ec2west = Fog::AWS::Compute.new(
           :aws_access_key_id => hash["params"]["aws_key"],
           :aws_secret_access_key => hash["params"]["aws_key_secret"],
           :region => "us-west-1")
         
-        @apac = Fog::AWS::EC2.new(
+        @apac = Fog::AWS::Compute.new(
           :aws_access_key_id => hash["params"]["aws_key"],
           :aws_secret_access_key => hash["params"]["aws_key_secret"],
           :region => "ap-southeast-1")

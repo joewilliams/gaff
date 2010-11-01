@@ -9,7 +9,7 @@ class Gaff
       STDOUT.flush
 
       begin
-        slicehost = Fog::Slicehost.new({:slicehost_password => hash["params"]["password"]})
+        slicehost = Fog::Slicehost::Compute.new({:slicehost_password => hash["params"]["password"]})
   
         Gaff::Log.debug(slicehost)
         STDOUT.flush
