@@ -144,25 +144,26 @@ class Gaff
       end
     end
     
+    # TODO: figure out a cleaner way to do this for all regions
     def self.zone(id)
       if id.include? "i-"
         begin
-          @ec2east.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
+          @ec2east.describe_instances('instance-id' => [id]).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
         rescue
           begin
-            @ec2west.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
+            @ec2west.describe_instances('instance-id' => [id]).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
           rescue
-            @apac.describe_instances(id).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
+            @apac.describe_instances('instance-id' => [id]).body["reservationSet"].first["instancesSet"].first["placement"]["availabilityZone"]
           end
         end
       elsif id.include? "vol-"
         begin
-          @ec2east.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
+          @ec2east.describe_volumes('volume-id' => [id]).body["volumeSet"].first["availabilityZone"]
         rescue
           begin
-            @ec2west.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
+            @ec2west.describe_volumes('volume-id' => [id]).body["volumeSet"].first["availabilityZone"]
           rescue
-            @apac.describe_volumes(id).body["volumeSet"].first["availabilityZone"]
+            @apac.describe_volumes('volume-id' => [id]).body["volumeSet"].first["availabilityZone"]
           end
         end
       end
