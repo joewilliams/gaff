@@ -23,7 +23,7 @@ class Gaff
         when "create_volume"
           result = @ec2.create_volume(hash["params"]["availability_zone"], hash["params"]["size"].to_i, hash["params"]["snapshot_id"])
         when "delete_volume"
-          result = @ec2.delete_volume(volume_id)
+          result = @ec2.delete_volume(hash["params"]["volume_id"])
         when "detach_volume"
           result = @ec2.detach_volume(
             hash["params"]["volume_id"],
