@@ -44,9 +44,9 @@ class Gaff
               "InstanceType" => hash["params"]["instance_type"]
             })
         when "reboot_instances"
-          result = @ec2.reboot_instances(instance_ids)
+          result = @ec2.reboot_instances(hash["params"]["instance_ids"])
         when "terminate_instances"
-          result = @ec2.terminate_instances(instance_ids)
+          result = @ec2.terminate_instances(hash["params"]["instance_ids"])
         end
         
         Gaff::Log.info(result)
