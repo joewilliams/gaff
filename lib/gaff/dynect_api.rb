@@ -9,63 +9,33 @@ class Gaff
       STDOUT.flush
       
       begin
-        dynect = Dynect.new(
+        dynect = DynectRest.new(
           hash["params"]["customer_name"], 
           hash["params"]["username"], 
-          hash["params"]["password"])
+          hash["params"]["password"], 
+          hash["params"]["zone"])
                             
         Gaff::Log.debug(dynect)
         STDOUT.flush
   
         case hash["method"]
         when "add_a_record"
-          node = dynect.add_node(
-            hash["params"]["node"], 
-            hash["params"]["zone"])
-                                 
-          record = dynect.add_a_record(
-            hash["params"]["zone"],
-            hash["params"]["address"], 
-            {
-              "node" => "#{hash["params"]["node"]}.#{hash["params"]["zone"]}", 
-              "ttl" => hash["params"]["ttl"]
-            })
+          result = dynect.a.fqdn("#{hash["params"]["node"]}.#{hash["params"]["zone"]}").ttl(hash["params"]["ttl"]).address(hash["params"]["rdata"]).save
+          publish = dynect.publish
         when "add_cname_record"
-          node = dynect.add_node(
-            hash["params"]["node"],
-            hash["params"]["zone"])
-          
-          record = dynect.add_cname_record(
-            hash["params"]["zone"],
-            hash["params"]["address"],
-            {
-              "node" => "#{hash["params"]["node"]}.#{hash["params"]["zone"]}", 
-              "ttl" => hash["params"]["ttl"]
-            })
+          result = dynect.cname.fqdn("#{hash["params"]["node"]}.#{hash["params"]["zone"]}").ttl(hash["params"]["ttl"]).cname(hash["params"]["rdata"]).save
+          publish = dynect.publish  
         when "delete_a_record"
-          record_id = dynect.list_a_records(
-            hash["params"]["zone"], 
-            {
-              "node" => "#{hash["params"]["node"]}.#{hash["params"]["zone"]}"
-            })
-                                            
-          record = dynect.delete_a_record(record_id[0]["record_id"])
+          result = dynect.a.fqdn("#{hash["params"]["node"]}.#{hash["params"]["zone"]}").delete
+          publish = dynect.publish
         when "delete_cname_record"
-          record_id = dynect.list_cname_records(
-            hash["params"]["zone"], 
-            {
-              "node" => "#{hash["params"]["node"]}.#{hash["params"]["zone"]}"
-            })
-          
-          record = dynect.delete_cname_record(record_id[0]["record_id"])
+          result = dynect.cname.fqdn("#{hash["params"]["node"]}.#{hash["params"]["zone"]}").delete
+          publish = dynect.publish
         end
         
-        if node
-          Gaff::Log.debug(node.inspect)
-          node = nil
-        end
-        Gaff::Log.info(record.inspect)
-        STDOUT.flush
+        Gaff::Log.info(result)
+        Gaff::Log.debug(publish)
+        STDOUT.flush        
       rescue Exception => e
         Gaff::Log.error(e)
         STDOUT.flush

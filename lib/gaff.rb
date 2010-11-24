@@ -2,7 +2,7 @@ require 'rubygems'
 
 require 'mq'
 require 'yajl'
-require 'dynect'
+require 'dynect_rest'
 require 'fog'
 require 'mixlib/config'
 require 'mixlib/log'
