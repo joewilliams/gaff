@@ -14,26 +14,9 @@ Example usage:
 
 $ gaff ./gaff.yml
 
-!! recent change, the region ("params":"region") is now required in all ec2 messages !!
+See examples for how to format your json to send to the queue.
 
-Send a JSON-RPC formatted message to the exchange with the a routing key to perform operations on that API.
+Recent breaking changes:
+ * EC2 messages require the region to be set in params, this allows for all support of all regions.
+ * With the change to dynect_rest I have changed the "address" field to the more correct "rdata".
 
-require 'rubygems'
-require 'carrot'
-
-exch = Carrot::AMQP::Exchange.new(Carrot.new, :topic, "api")
-
-hash = {"method" => "add_a_record", "params" => {
-            "customer_name" => "gaff.com", 
-            "username" => "username", 
-            "password" => "password",
-            "node" => "test123",
-            "zone" => "gaff.com",
-            "address" => "127.0.0.1",
-            "ttl" => "300"
-           }
-       }
-
-json = hash.to_json
-
-exch.publish(json, :routing_key => "dynect")
